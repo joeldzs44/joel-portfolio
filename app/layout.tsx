@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothAnchors } from "@/components/smooth-anchors";
 import { InterviewProvider } from "@/components/interview/interview-provider";
+import { InterviewFab } from "@/components/interview/interview-fab";
 import { getAllPosts } from "@/lib/content";
 import { site } from "@/content/site";
 import "./globals.css";
@@ -34,6 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <SiteHeader hasWriting={hasWriting} />
           <main id="main">{children}</main>
           <SiteFooter />
+          <InterviewFab />
         </InterviewProvider>
         <SmoothAnchors />
         <Analytics />

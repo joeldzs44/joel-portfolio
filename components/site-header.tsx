@@ -7,7 +7,6 @@ import { clsx } from "clsx";
 import { contactNav, nav, site } from "@/content/site";
 import { activeNavLabel } from "@/lib/nav";
 import { Container } from "@/components/ui";
-import { InterviewTrigger } from "@/components/interview/interview-trigger";
 
 // The id of the home-page section under a line 35% down the viewport, or null above the first one.
 // While paused (the mobile menu is open and pushes the page down) the last value is kept.
@@ -102,7 +101,6 @@ export function SiteHeader({ hasWriting }: { hasWriting: boolean }) {
               {item.label}
             </Link>
           ))}
-          <InterviewTrigger className="text-muted transition-colors hover:text-ink">Interview</InterviewTrigger>
           <Link href={contactNav.href} data-nav={contactNav.label} className={clsx("transition-colors", tone(contactNav.label, "text-ink hover:text-lime"))}>
             {contactNav.label}
           </Link>
@@ -134,9 +132,6 @@ export function SiteHeader({ hasWriting }: { hasWriting: boolean }) {
                 {item.label}
               </Link>
             ))}
-            <InterviewTrigger className="text-left text-muted" onOpen={() => setOpen(false)}>
-              Interview
-            </InterviewTrigger>
             <Link href={contactNav.href} className={clsx("flex items-center gap-2.5", tone(contactNav.label, "text-ink"))} onClick={() => setOpen(false)}>
               {active === contactNav.label && <span aria-hidden className="size-1.5 rounded-full bg-lime" />}
               {contactNav.label}

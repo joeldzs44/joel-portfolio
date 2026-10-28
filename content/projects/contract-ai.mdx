@@ -1,0 +1,89 @@
+---
+title: Contract AI
+order: 2
+featured: true
+year: "2021–26"
+org: GEP
+tagline: Contract intelligence for enterprise procurement.
+summary: I architected and built the contracts AI module for GEP Quantum — independent services for clause identification, entity extraction and an AI assistant — designed to scale for bulk workloads and adopted by 20+ clients.
+stack: [Python, FastAPI, AKS, Kafka, Langfuse]
+eyebrow: GEP / Contract intelligence
+headline: I architected a contracts AI platform that 20+ enterprise clients adopted.
+intro: GEP Quantum is an enterprise procurement platform. Its contracts AI module reads contracts so people don't have to read every clause — finding clauses, pulling out key data points and answering questions. I architected and built it with a focus on scale and client adoption.
+facts:
+  - { label: Role, value: Senior Data Scientist }
+  - { label: Employer, value: GEP }
+  - { label: Stack, value: FastAPI · Azure Kubernetes · Kafka · New Relic · Langfuse }
+  - { label: Scope, value: Architecture and build of the full module }
+stats:
+  - { value: "20+", label: Clients, note: Using the module in production }
+  - { value: "3", label: Core services, note: "Clauses, entities, assistant" }
+  - { value: "1", label: Shared queue, note: Kafka absorbs bulk uploads }
+architecture:
+  label: Contract AI / system overview
+  lanes:
+    - { title: Intake, nodes: [Contract documents, Bulk uploads] }
+    - { title: Queue, nodes: [Kafka] }
+    - { title: Services (FastAPI on AKS · horizontal scaling), nodes: [Clause identification (classical ML), Entity extraction (NER), AI assistant chat], accent: true }
+    - { title: Product, nodes: [GEP Quantum] }
+  rail: [RBAC, PII masking, Prompt-injection defence, New Relic + Langfuse]
+  caption: Independent services scale per task; bulk jobs queue through Kafka.
+---
+
+<Problem label="01 / The problem" title="Enterprise contracts are long, and the important parts hide.">
+
+Procurement teams manage thousands of contracts. Finding a specific clause, a renewal date or a liability cap meant reading documents end to end.
+
+The module had to work for many clients at once, process bulk uploads without slowing anyone down, and meet enterprise security expectations — clients were trusting it with their most sensitive documents.
+
+I architected the module and built it as a set of services, each responsible for one task, so it could grow with adoption instead of being rebuilt for it.
+
+</Problem>
+
+<Approach label="02 / System design" title="One service per task, one queue in front." intro="Microservices on Azure Kubernetes, fed by Kafka, observed end to end.">
+
+<Stage step="01 / Intake" title="Documents and bulk uploads">
+Contracts arrive one at a time or in large batches, and every job goes onto a Kafka queue first.
+</Stage>
+
+<Stage step="02 / Clauses" title="Clause identification">
+Classical ML models trained on enterprise proprietary data classify contract clauses quickly and predictably.
+</Stage>
+
+<Stage step="03 / Entities" title="Named entity recognition">
+NER pulls specific data points — parties, dates, values — out of each contract into structured fields.
+</Stage>
+
+<Stage step="04 / Assistant" title="AI assistant chat">
+An assistant answers questions about a contract, grounded in the document and behind the platform's guardrails.
+</Stage>
+
+<Decision title="Scale each task on its own.">
+Every capability ran as its own FastAPI service on Azure Kubernetes with horizontal scaling. A large bulk upload scaled the services doing that work without affecting anyone using the assistant.
+</Decision>
+
+<Decision title="Security and visibility were built in from the start.">
+RBAC, PII masking and prompt-injection defences protected client data; SonarCloud and GitHub Advanced Security checked every change. New Relic and Langfuse showed how each service and model call behaved in production.
+</Decision>
+
+</Approach>
+
+<Reflection label="03 / Evaluation" title="Adoption was the real test." subtitle="A contribution, not a product pitch.">
+
+The module is used by more than 20 clients. The design decisions that mattered most were the unglamorous ones: a queue in front of everything, services that scale independently, and guardrails clients could audit.
+
+Using classical ML for clause identification, rather than an LLM for everything, kept the highest-volume task fast, cheap and consistent.
+
+</Reflection>
+
+<Takeaways>
+
+<Takeaway label="04 / What I’d keep" title="Pick the simplest model that does the job.">
+Classical models for classification and LLMs where language understanding is actually needed gave the best balance of cost, speed and accuracy.
+</Takeaway>
+
+<Takeaway label="05 / What comes next" title="Deeper answers across many contracts.">
+The natural next step is questions that span a client's whole contract portfolio, with the same security model and observability.
+</Takeaway>
+
+</Takeaways>

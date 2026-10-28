@@ -1,0 +1,60 @@
+---
+title: How to publish on this site.
+description: A working draft that shows every writing component. Drafts appear in development only.
+standfirst: Every post is one MDX file in content/writing. This draft shows each building block so you can copy what you need — set draft to false, or delete this file, when you publish your first real note.
+date: 2026-10-28
+category: Field notes
+tags: [Meta, Writing]
+draft: true
+cover:
+  label: Draft ≠ published
+  caption: "Drafts render in dev only. Set draft: false to publish."
+  metrics:
+    - { label: Visible in development, value: 100 }
+    - { label: Visible in production, value: 0 }
+---
+
+The first paragraph of a post renders as a lead. Keep it to two or three sentences that tell the reader what they will learn.
+
+<Chapter label="Frontmatter" title="Every post starts with a few fields.">
+
+The file name becomes the URL, so `how-to-publish.mdx` is served at `/writing/how-to-publish`. Required fields are `title`, `description`, `standfirst`, `date` and `category`. Optional fields are `tags`, `draft`, `related` and `cover`.
+
+Categories become the filters on the writing index automatically — there is no list to maintain.
+
+</Chapter>
+
+<PullQuote note="Pull quotes take an optional note.">A pull quote should say the one thing worth remembering.</PullQuote>
+
+<Chapter label="Code and tables" title="Code blocks and tables come from plain Markdown.">
+
+Fenced code blocks render in the figure style:
+
+```yaml
+question: "Which clause governs renewal?"
+answerable: true
+required_evidence: ["section-4.2"]
+```
+
+| Configuration | Recall@10 | Latency |
+| --- | --- | --- |
+| Dense retrieval | 0.78 | 0.9s |
+| Hybrid retrieval | 0.87 | 1.0s |
+
+</Chapter>
+
+<Chapter label="Summaries" title="End with the short version.">
+
+Chapters with a `label` appear in the sidebar table of contents in order.
+
+</Chapter>
+
+<Summary>
+- Put the takeaway first.
+- Use one chapter per idea.
+- Cite what you build on.
+</Summary>
+
+<References>
+Lewis et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS.
+</References>

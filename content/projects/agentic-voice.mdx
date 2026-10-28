@@ -1,0 +1,90 @@
+---
+title: Agentic Voice Assistant
+order: 1
+featured: true
+year: "2026"
+org: ProjectsForce
+tagline: An AI scheduling assistant on four channels.
+summary: Homeowners and retail-store staff book, reschedule or cancel installation appointments, add notes and update addresses — over web chat, inbound phone, SMS and outbound calls. Every request is classified once and handed to a specialised agent that works through the platform's own APIs.
+stack: [Python, FastAPI, AWS Bedrock, AgentSquad, Vapi]
+eyebrow: ProjectsForce / Agentic voice and chat
+headline: I made an AI scheduling agent people can actually finish a call with.
+intro: ProjectsForce 360 is a field-service management platform. Its scheduling assistant lets homeowners and retail-store staff manage installation appointments without waiting for a person. I worked on lead ingestion, reliability, guardrails and production support — the work that took successful calls from 60% to 95%.
+facts:
+  - { label: Role, value: Senior Data Scientist }
+  - { label: Employer, value: ProjectsForce }
+  - { label: Stack, value: FastAPI · ECS Fargate · Bedrock (Claude Sonnet) · AgentSquad }
+  - { label: Channels, value: Web chat · Phone · SMS · Outbound calls }
+stats:
+  - { value: "60→95%", label: GREEN calls, note: Callers who got done what they called for }
+  - { value: "2,000+", label: Minutes a day, note: From a single client in beta }
+  - { value: "4", label: Channels, note: "Web chat, inbound phone, SMS, outbound" }
+architecture:
+  label: Agentic Voice / system overview
+  lanes:
+    - { title: Channels, nodes: [Web chat, Inbound phone (Vapi), SMS, Outbound calls] }
+    - { title: Gateway, nodes: [FastAPI on ECS Fargate, Tenant isolation + RBAC] }
+    - { title: Orchestration, nodes: [Intent classifier], accent: true }
+    - { title: Agents (Bedrock · Claude Sonnet · AgentSquad), nodes: [Booking, Reschedule & cancel, Notes & address, Lead intake] }
+    - { title: Systems, nodes: [ProjectsForce APIs] }
+  rail: [Guardrails, Observability]
+  caption: Every request is classified once, then handled by one specialised agent.
+---
+
+<Problem label="01 / The problem" title="Booking an installation shouldn't need a phone queue.">
+
+Homeowners and retail-store staff needed to book, reschedule and cancel installation appointments, add notes and fix addresses — whenever it suited them and on whatever channel they were already using.
+
+The assistant had to work across web chat, inbound phone, SMS and outbound calls, act on real appointments through the platform's own APIs, and keep every tenant's data separate. A conversation that ends without the caller getting what they came for is a failure, however fluent it sounded.
+
+My work focused on the parts that decide whether a call succeeds: getting new customers in, making each agent reliable, keeping it inside safe boundaries, and fixing production issues fast.
+
+</Problem>
+
+<Approach label="02 / System design" title="Classify once, then hand off to a specialist." intro="A multi-agent setup where each agent owns one job and talks to real systems.">
+
+<Stage step="01 / Channels" title="One assistant, four ways in">
+Web chat, inbound phone through Vapi voice AI, SMS and outbound calls all reach the same FastAPI service on AWS ECS Fargate.
+</Stage>
+
+<Stage step="02 / Isolation" title="Tenant separation and RBAC">
+Every request carries its tenant from the root, and role-based access decides what each caller may see or change.
+</Stage>
+
+<Stage step="03 / Routing" title="Intent classification">
+An intent classifier routes each request to the agent responsible for it, so no single prompt has to handle every task.
+</Stage>
+
+<Stage step="04 / Action" title="Specialised agents on Bedrock">
+AgentSquad agents running Claude Sonnet on AWS Bedrock book, reschedule, cancel and update records through native ProjectsForce APIs.
+</Stage>
+
+<Decision title="Reliability is measured by finished tasks.">
+We tracked calls as GREEN when the caller completed what they called for. Working through failed conversations one pattern at a time — tightening agent instructions, handling edge cases in the API calls, adding recovery paths — moved GREEN calls from 60% to 95%.
+</Decision>
+
+<Decision title="Guardrails and production support are part of the product.">
+I added guardrails that keep each agent inside its job and its tenant, built lead ingestion for new customers, and handled production support including P1 hotfixes. A scheduling assistant is only trusted if problems get fixed the same day.
+</Decision>
+
+</Approach>
+
+<Reflection label="03 / Evaluation" title="What the numbers say." subtitle="A contribution, not a product pitch.">
+
+In beta, a single client sends more than 2,000 minutes of conversation a day through the assistant, and the system is built to scale well beyond that.
+
+The improvement that mattered most wasn't a new model — it was treating each failed call as a bug report. Measuring GREEN calls gave the team one number everyone understood, and every fix could be checked against it.
+
+</Reflection>
+
+<Takeaways>
+
+<Takeaway label="04 / What I’d keep" title="Small, specialised agents behind a classifier.">
+Routing each request to one focused agent made failures easy to locate and fix. When something went wrong, there was exactly one place to look.
+</Takeaway>
+
+<Takeaway label="05 / What comes next" title="Higher volume and more self-service.">
+The next step is handling much larger concurrent workloads and covering more of the edge cases that still need a person, while keeping the same tenant isolation and guardrails.
+</Takeaway>
+
+</Takeaways>

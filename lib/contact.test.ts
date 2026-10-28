@@ -26,6 +26,11 @@ describe("validateContact", () => {
     expect(result.ok === false && result.errors.message).toBeTruthy();
   });
 
+  it("keeps the name on one line", () => {
+    const result = validateContact({ ...valid, name: "Ada\nBcc: someone" });
+    expect(result.ok && result.value.name).toBe("Ada Bcc: someone");
+  });
+
   it("strips control characters", () => {
     const result = validateContact({ ...valid, name: "Ada\u0000\u0007 L", message: "Hi\u001b there\nfriend" });
     expect(result.ok && result.value).toMatchObject({ name: "Ada L", message: "Hi there\nfriend" });

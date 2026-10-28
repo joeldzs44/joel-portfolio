@@ -6,7 +6,8 @@ const cookieJar = vi.hoisted(() => ({ value: undefined as string | undefined }))
 
 vi.mock("@/lib/interview/openrouter", () => openrouter);
 vi.mock("@/lib/interview/cache", async (actual) => ({ ...(await actual<object>()), ...store }));
-vi.mock("@/lib/interview/profile", () => ({ buildProfile: async () => ({ prompt: "profile", hash: "profile-hash" }) }));
+const profile = vi.hoisted(() => ({ buildProfile: vi.fn() }));
+vi.mock("@/lib/interview/profile", () => profile);
 vi.mock("@/lib/server/rate-limit", () => ({ hitRateLimit: async () => true }));
 vi.mock("next/headers", () => ({
   cookies: async () => ({ get: () => (cookieJar.value ? { value: cookieJar.value } : undefined) }),
@@ -39,12 +40,14 @@ function answers(chunks: string[], end: { finishReason: string | null } | Error)
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.unstubAllEnvs();
   vi.stubEnv("OPENROUTER_API_KEY", "test-key");
   vi.stubEnv("SESSION_SECRET", SECRET);
   vi.stubEnv("IP_HASH_SALT", SALT);
   cookieJar.value = undefined;
   store.getCached.mockResolvedValue(null);
   store.putCached.mockResolvedValue(undefined);
+  profile.buildProfile.mockResolvedValue({ prompt: "profile", hash: "profile-hash" });
 });
 
 describe("interview answers", () => {
@@ -99,6 +102,39 @@ describe("interview answers", () => {
     );
     expect(res.status).toBe(200);
     expect(openrouter.streamCompletion).toHaveBeenCalled();
+  });
+});
+
+describe("interview availability", () => {
+  it("is unavailable in production without the rate-limit store", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("SUPABASE_URL", "");
+    expect((await POST(ask("What does Joel do?"))).status).toBe(503);
+  });
+
+  it("answers with a friendly error when the profile can't be built", async () => {
+    profile.buildProfile.mockRejectedValue(new Error("content missing"));
+    const res = await POST(ask("What does Joel do?"));
+    expect(res.status).toBe(503);
+    expect((await res.json()).error).toMatch(/isn't available/);
+  });
+
+  it("stops cleanly when the visitor leaves mid-answer", async () => {
+    let finished = false;
+    openrouter.streamCompletion.mockImplementation(async function* () {
+      for (let i = 0; i < 5; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        yield `part ${i} `;
+      }
+      finished = true;
+      return { finishReason: "stop" };
+    });
+    const reader = (await POST(ask("What does Joel do?"))).body!.getReader();
+    await reader.read();
+    await reader.cancel();
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    expect(finished).toBe(false);
+    expect(store.putCached).not.toHaveBeenCalled();
   });
 });
 

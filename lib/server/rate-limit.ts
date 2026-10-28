@@ -1,3 +1,4 @@
+import "server-only";
 import { isProduction } from "./env";
 import { getSupabase } from "./supabase";
 
@@ -20,6 +21,11 @@ export async function hitRateLimit(key: string, windowSec: number, max: number) 
   if (error) {
     console.error("rate limit", error.message);
     return false;
+  }
+  // About one request in a hundred clears windows older than two days.
+  if (Math.random() < 0.01) {
+    const old = new Date(Date.now() - 2 * 86400_000).toISOString();
+    await supabase.from("rate_hits").delete().lt("window_start", old);
   }
   return data === true;
 }

@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 
 // Cloudflare Turnstile bot check. Renders nothing when no site key is configured
 // (local development), in which case the server skips verification outside production.
+// onError fires when the check can't run: the script is blocked or, in production,
+// the site key is missing.
 
 type TurnstileApi = {
   render: (el: HTMLElement, options: Record<string, unknown>) => string;
@@ -35,13 +37,20 @@ function loadScript() {
   return scriptPromise;
 }
 
-export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
+export const TURNSTILE_ERROR = "The human check couldn't load. Allow challenges.cloudflare.com in your content blocker, or reload the page.";
+
+export function Turnstile({ onToken, onError }: { onToken: (token: string) => void; onError?: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const callback = useRef(onToken);
   callback.current = onToken;
+  const fail = useRef(onError);
+  fail.current = onError;
 
   useEffect(() => {
-    if (!SITE_KEY) return;
+    if (!SITE_KEY) {
+      if (process.env.NODE_ENV === "production") fail.current?.();
+      return;
+    }
     let id: string | undefined;
     let cancelled = false;
     loadScript()
@@ -53,9 +62,10 @@ export function Turnstile({ onToken }: { onToken: (token: string) => void }) {
           appearance: "interaction-only",
           callback: (token: string) => callback.current(token),
           "expired-callback": () => callback.current(""),
+          "error-callback": () => fail.current?.(),
         });
       })
-      .catch(() => {});
+      .catch(() => fail.current?.());
     return () => {
       cancelled = true;
       if (id) window.turnstile?.remove(id);

@@ -1,3 +1,4 @@
+import "server-only";
 import type { ChatMessage } from "./guard";
 
 type Config = { apiKey: string; model: string; siteUrl: string };

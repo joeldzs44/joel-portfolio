@@ -1,3 +1,4 @@
+import "server-only";
 import { randomUUID } from "node:crypto";
 import { getSupabase } from "@/lib/server/supabase";
 import type { Tag } from "./constants";
@@ -99,7 +100,12 @@ export async function approve(id: string) {
   const file = await supabase.storage.from(PRIVATE_BUCKET).download(row.image_path);
   if (file.error) throw new Error(file.error.message);
   const path = `approved/${id}.png`;
-  const upload = await supabase.storage.from(PUBLIC_BUCKET).upload(path, file.data, { contentType: "image/png", upsert: true });
+  const upload = await supabase.storage.from(PUBLIC_BUCKET).upload(path, file.data, {
+    contentType: "image/png",
+    upsert: true,
+    // Short cache lifetime so a drawing deleted later stops being served within a minute.
+    cacheControl: "60",
+  });
   if (upload.error) throw new Error(upload.error.message);
   const update = await supabase.from("art_commits").update({ status: "approved", image_path: path }).eq("id", id);
   if (update.error) throw new Error(update.error.message);

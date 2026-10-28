@@ -1,3 +1,4 @@
+import "server-only";
 // Server-side configuration. Each feature reads its own group; a group is
 // present only when every variable it needs is set, so a half-configured
 // feature behaves like an unconfigured one instead of failing mid-request.
@@ -24,7 +25,8 @@ export function getServerEnv() {
     resend: group({ apiKey: read("RESEND_API_KEY"), to: read("CONTACT_TO_EMAIL"), from: read("CONTACT_FROM_EMAIL") }),
     openrouter: group({ apiKey: read("OPENROUTER_API_KEY"), model: read("OPENROUTER_MODEL") ?? "xiaomi/mimo-v2.6-flash" }),
     sessionSecret: read("SESSION_SECRET"),
-    ipSalt: read("IP_HASH_SALT"),
+    // IP hashes need a secret salt; the session secret stands in if none is set.
+    ipSalt: read("IP_HASH_SALT") ?? read("SESSION_SECRET"),
     adminSecret: read("ADMIN_SECRET"),
     siteUrl: read("NEXT_PUBLIC_SITE_URL") ?? "http://localhost:3000",
   };

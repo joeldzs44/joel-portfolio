@@ -9,11 +9,14 @@ export async function POST(req: Request) {
   const env = getServerEnv();
   if (!env.adminSecret || !env.sessionSecret) return json({ error: "Admin isn't configured." }, 503);
 
-  if (!(await hitRateLimit(`admin-login:${ipKey(req, env.ipSalt)}`, 900, 5)))
-    return json({ error: "Too many attempts. Wait 15 minutes." }, 429);
+  // Per connection, plus a cap across all connections against distributed guessing.
+  const allowed =
+    (await hitRateLimit(`admin-login:${ipKey(req, env.ipSalt)}`, 900, 5)) && (await hitRateLimit("admin-login:global", 3600, 20));
+  if (!allowed) return json({ error: "Too many attempts. Wait 15 minutes." }, 429);
 
   const { secret } = (await req.json().catch(() => ({}))) as { secret?: unknown };
-  if (typeof secret !== "string" || !safeEqual(secret, env.adminSecret)) return json({ error: "That secret isn't right." }, 401);
+  // Pasted secrets often carry a stray space or line break.
+  if (typeof secret !== "string" || !safeEqual(secret.trim(), env.adminSecret)) return json({ error: "That secret isn't right." }, 401);
 
   const response = json({ ok: true });
   response.headers.append(

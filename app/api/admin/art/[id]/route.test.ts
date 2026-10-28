@@ -14,7 +14,8 @@ import { signToken } from "@/lib/server/signed-token";
 import { DELETE, PATCH } from "./route";
 
 const SECRET = "test-session-secret";
-const params = Promise.resolve({ id: "art-1" });
+const ID = "4b1c6f0e-2a3d-4e5f-8a9b-0c1d2e3f4a5b";
+const params = Promise.resolve({ id: ID });
 const request = (method: string, body?: unknown) =>
   new Request("http://localhost/api/admin/art/art-1", {
     method,
@@ -32,18 +33,24 @@ describe("admin art moderation", () => {
   it("approves, then refreshes the home page", async () => {
     const res = await PATCH(request("PATCH", { action: "approve" }), { params });
     expect(res.status).toBe(200);
-    expect(store.approve).toHaveBeenCalledWith("art-1");
+    expect(store.approve).toHaveBeenCalledWith(ID);
     expect(cache.revalidatePath).toHaveBeenCalledWith("/");
   });
 
   it("rejects", async () => {
     await PATCH(request("PATCH", { action: "reject" }), { params });
-    expect(store.reject).toHaveBeenCalledWith("art-1");
+    expect(store.reject).toHaveBeenCalledWith(ID);
   });
 
   it("deletes", async () => {
     await DELETE(request("DELETE"), { params });
-    expect(store.remove).toHaveBeenCalledWith("art-1");
+    expect(store.remove).toHaveBeenCalledWith(ID);
+  });
+
+  it("returns 404 for an id that can't exist", async () => {
+    const res = await DELETE(request("DELETE"), { params: Promise.resolve({ id: "not-a-uuid" }) });
+    expect(res.status).toBe(404);
+    expect(store.remove).not.toHaveBeenCalled();
   });
 
   it("refuses without a valid admin session", async () => {

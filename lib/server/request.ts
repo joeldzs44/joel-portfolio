@@ -1,3 +1,4 @@
+import "server-only";
 import { createHash } from "node:crypto";
 
 export function clientIp(req: Request) {

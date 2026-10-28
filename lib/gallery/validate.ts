@@ -1,4 +1,4 @@
-import { cleanText } from "@/lib/text";
+import { cleanLine } from "@/lib/text";
 import { ART_LIMITS, ART_SIZE, TAGS, type Tag } from "./constants";
 
 export { ART_SIZE };
@@ -25,9 +25,9 @@ export function validateSubmission(body: unknown): Result {
   const tag = source.tag;
   if (typeof tag !== "string" || !(TAGS as readonly string[]).includes(tag)) return { ok: false, error: "Pick a tag for your drawing." };
 
-  const name = cleanText(source.name);
+  const name = cleanLine(source.name);
   if (name.length > ART_LIMITS.name) return { ok: false, error: `Keep your name under ${ART_LIMITS.name} characters.` };
-  const message = cleanText(source.message);
+  const message = cleanLine(source.message);
   if (message.length > ART_LIMITS.message) return { ok: false, error: `Keep the message under ${ART_LIMITS.message} characters.` };
 
   return { ok: true, value: { png, tag: tag as Tag, name, message } };

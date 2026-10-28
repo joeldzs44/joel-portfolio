@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { clsx } from "clsx";
 import { CONTACT_LIMITS } from "@/lib/contact";
-import { Turnstile } from "@/components/turnstile";
+import { TURNSTILE_ERROR, Turnstile } from "@/components/turnstile";
 
 type Status = { state: "idle" | "sending" | "sent" } | { state: "error"; message: string };
 type Errors = Partial<Record<"name" | "email" | "message", string>>;
@@ -90,7 +90,7 @@ export function ContactForm() {
       </Field>
       {/* Honeypot: hidden from people, irresistible to bots. */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
-      <Turnstile key={attempt} onToken={setToken} />
+      <Turnstile key={attempt} onToken={setToken} onError={() => setStatus({ state: "error", message: TURNSTILE_ERROR })} />
       <div className="flex flex-wrap items-center gap-5">
         <button
           type="submit"

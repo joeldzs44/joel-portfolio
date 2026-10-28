@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { interview } from "@/content/site";
-import { Turnstile } from "@/components/turnstile";
+import { TURNSTILE_ERROR, Turnstile } from "@/components/turnstile";
 import { parseAnswer, signedHistory } from "@/lib/interview/transcript";
 
 type Message = { role: "user" | "assistant"; content: string; cutOff?: boolean; sig?: string };
@@ -166,6 +166,10 @@ export function InterviewPanel({ onClose }: { onClose: () => void }) {
                   const history = verifying;
                   setVerifying(null);
                   void send(history, token);
+                }}
+                onError={() => {
+                  setVerifying(null);
+                  setNotice(TURNSTILE_ERROR);
                 }}
               />
             </div>

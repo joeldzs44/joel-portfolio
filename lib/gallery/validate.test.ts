@@ -21,6 +21,11 @@ describe("validateSubmission", () => {
     expect(result.ok && result.value).toMatchObject({ tag: "cheer", name: "Ada", message: "Nice site!" });
   });
 
+  it("keeps the name on one line", () => {
+    const result = validateSubmission({ ...valid, name: "Ada\nLovelace" });
+    expect(result.ok && result.value.name).toBe("Ada Lovelace");
+  });
+
   it("rejects a JPEG data URL", () => {
     expect(validateSubmission({ ...valid, image: valid.image.replace("image/png", "image/jpeg") }).ok).toBe(false);
   });

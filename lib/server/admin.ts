@@ -1,3 +1,4 @@
+import "server-only";
 import { cookies } from "next/headers";
 import { getServerEnv } from "./env";
 import { verifyToken } from "./signed-token";

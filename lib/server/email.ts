@@ -1,3 +1,4 @@
+import "server-only";
 import { getServerEnv } from "./env";
 
 // Sends a plain-text email to Joel through Resend. The recipient only ever

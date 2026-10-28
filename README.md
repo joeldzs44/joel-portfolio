@@ -56,4 +56,4 @@ New drawings are private until approved. You get an email for each one; review t
 
 ## How the interview is protected
 
-The OpenRouter key never reaches the browser. Each visitor passes a Turnstile check once per 30 minutes, is limited to 20 questions an hour and 60 a day (1,500 a day across everyone), and answers are capped at ~350 tokens and restricted to questions about Joel. First questions are cached until the content changes, so repeated questions cost nothing. The key's own credit limit is the final backstop.
+The OpenRouter key never reaches the browser. Each visitor passes a Turnstile check once per 30 minutes, is limited to 20 questions an hour and 60 a day (1,500 a day across everyone), and answers are capped at ~350 tokens and restricted to questions about Joel. First questions are cached for a week (or until the content changes), so repeated questions cost nothing. The key's own credit limit is the final backstop.

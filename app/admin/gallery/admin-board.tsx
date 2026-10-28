@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ArtCommit } from "@/lib/gallery/store";
 
@@ -47,7 +47,10 @@ export function AdminLogin() {
 }
 
 export function AdminBoard({ initial }: { initial: ArtCommit[] }) {
+  const router = useRouter();
   const [items, setItems] = useState(initial);
+  // A refresh brings in new submissions and the public image URL of approved ones.
+  useEffect(() => setItems(initial), [initial]);
   const [error, setError] = useState("");
   const pending = items.filter((item) => item.status === "pending");
   const approved = items.filter((item) => item.status === "approved");
@@ -68,6 +71,9 @@ export function AdminBoard({ initial }: { initial: ArtCommit[] }) {
     if (!res?.ok) {
       setItems(previous);
       setError((await res?.json().catch(() => null))?.error ?? "That didn't work. Try again.");
+    } else if (action === "approve") {
+      // The private preview link stops working once the drawing moves to the public bucket.
+      router.refresh();
     }
   }
 
@@ -118,7 +124,7 @@ function Card({ item, children }: { item: ArtCommit; children: React.ReactNode }
       {/* Pending images use short-lived signed URLs. */}
       <img src={item.imageUrl} alt="" width={480} height={360} className="aspect-[4/3] w-full" />
       <div className="flex flex-col gap-3 p-4">
-        <p className="text-sm text-ink">
+        <p className="break-words text-sm text-ink">
           <span className="font-mono text-lime">{item.tag}</span> · {item.name || "Anonymous"}
         </p>
         {item.message && <p className="break-words text-sm text-muted">{item.message}</p>}

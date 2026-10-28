@@ -1,4 +1,4 @@
-import { cleanText } from "./text";
+import { cleanLine, cleanText } from "./text";
 
 export const CONTACT_LIMITS = { name: 80, email: 254, message: 2000 } as const;
 
@@ -11,8 +11,8 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export function validateContact(body: unknown): ContactResult {
   const source = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
   const value = {
-    name: cleanText(source.name),
-    email: cleanText(source.email),
+    name: cleanLine(source.name),
+    email: cleanLine(source.email),
     message: cleanText(source.message),
   };
   const errors: Partial<Record<Field, string>> = {};

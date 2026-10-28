@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { ART_LIMITS, TAGS, type Tag } from "@/lib/gallery/constants";
 import { DrawingCanvas, type DrawingCanvasHandle } from "@/components/gallery/drawing-canvas";
-import { Turnstile } from "@/components/turnstile";
+import { TURNSTILE_ERROR, Turnstile } from "@/components/turnstile";
 
 type Status = { state: "idle" | "sending" | "sent" } | { state: "error"; message: string };
 
@@ -119,7 +119,7 @@ export function DrawingDialog({ onClose }: { onClose: () => void }) {
               </label>
             </div>
 
-            <Turnstile key={attempt} onToken={setToken} />
+            <Turnstile key={attempt} onToken={setToken} onError={() => setStatus({ state: "error", message: TURNSTILE_ERROR })} />
 
             <div className="flex flex-wrap items-center gap-4">
               <button

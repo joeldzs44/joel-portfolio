@@ -16,7 +16,6 @@ const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400"], variable: "--f
 export const metadata: Metadata = {
   title: { default: site.title, template: `%s · ${site.name}` },
   description: site.description,
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

@@ -17,13 +17,17 @@ export const site = {
 };
 
 // `writing: true` items are hidden automatically until a published post exists.
+// `match` marks the item on other pages; on the home page the item whose
+// `sections` is in view is marked instead.
 export const nav = [
-  { label: "Home", href: "/", match: /^\/$/ },
-  { label: "Work", href: "/projects", match: /^\/projects/ },
-  { label: "Experience", href: "/#experience", match: null },
-  { label: "Skills", href: "/#skills", match: null },
-  { label: "Writing", href: "/writing", match: /^\/writing/, writing: true },
+  { label: "Home", href: "/", match: /^\/$/, sections: [] },
+  { label: "Work", href: "/projects", match: /^\/projects/, sections: ["work"] },
+  { label: "Skills", href: "/#skills", match: null, sections: ["skills"] },
+  { label: "Experience", href: "/#experience", match: null, sections: ["experience", "certifications"] },
+  { label: "Writing", href: "/writing", match: /^\/writing/, sections: [], writing: true },
 ] as const;
+
+export const contactNav = { label: "Contact", href: "/#contact", sections: ["contact"] } as const;
 
 export const home = {
   hero: {

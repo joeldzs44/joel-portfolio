@@ -16,6 +16,12 @@ describe("getServerEnv", () => {
     expect(getServerEnv().supabase).toEqual({ url: "https://x.supabase.co", secretKey: "key" });
   });
 
+  it("falls back to the session secret for hashing IPs", () => {
+    vi.stubEnv("IP_HASH_SALT", "");
+    vi.stubEnv("SESSION_SECRET", "session");
+    expect(getServerEnv().ipSalt).toBe("session");
+  });
+
   it("uses the project root when the Supabase URL is the REST endpoint", () => {
     vi.stubEnv("SUPABASE_URL", "https://x.supabase.co/rest/v1/");
     vi.stubEnv("SUPABASE_SECRET_KEY", "key");

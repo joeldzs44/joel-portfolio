@@ -1,3 +1,4 @@
+import "server-only";
 import { createHash } from "node:crypto";
 import { home, site } from "@/content/site";
 import { education, experience } from "@/content/experience";
@@ -69,6 +70,10 @@ async function compose() {
 let profile: ReturnType<typeof compose> | undefined;
 
 export function buildProfile() {
-  profile ??= compose();
+  // A failed build is forgotten so the next request tries again.
+  profile ??= compose().catch((error) => {
+    profile = undefined;
+    throw error;
+  });
   return profile;
 }

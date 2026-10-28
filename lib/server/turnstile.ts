@@ -1,3 +1,4 @@
+import "server-only";
 import { getServerEnv, isProduction } from "./env";
 
 export async function verifyTurnstile(token: unknown, ip: string) {

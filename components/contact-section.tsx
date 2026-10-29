@@ -6,7 +6,7 @@ export function ContactSection({ index }: { index: string }) {
   const { contact } = home;
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="bg-surface">
+    <section id="contact" aria-labelledby="contact-title">
       <Container className="grid gap-12 pb-16 pt-20 md:pt-[88px] lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
         <div className="flex flex-col gap-7">
           <Eyebrow>

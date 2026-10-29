@@ -9,7 +9,7 @@ type Status = { state: "idle" | "sending" | "sent" } | { state: "error"; message
 type Errors = Partial<Record<"name" | "email" | "message", string>>;
 
 const field =
-  "w-full border border-line bg-page px-4 py-3 text-ink placeholder:text-dim transition-colors focus:border-lime focus:outline-none aria-[invalid=true]:border-danger";
+  "w-full border border-line bg-surface px-4 py-3 text-ink placeholder:text-dim transition-colors focus:border-lime focus:outline-none aria-[invalid=true]:border-danger";
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>({ state: "idle" });

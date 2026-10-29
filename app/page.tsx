@@ -85,8 +85,8 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <section id="certifications" aria-labelledby="certifications-title" className="bg-surface">
-        <Container className="flex flex-col gap-8 pb-20 md:pb-[104px]">
+      <section id="certifications" aria-labelledby="certifications-title">
+        <Container className="flex flex-col gap-8 py-20 md:py-[104px]">
           <SectionIntro
             label={`04 / ${home.certifications.label}`}
             title={<span id="certifications-title">{home.certifications.title}</span>}
@@ -127,7 +127,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <section id="art" aria-labelledby="art-title">
+      <section id="art" aria-labelledby="art-title" className="bg-surface">
         <Container className="flex flex-col gap-10 py-20 md:py-24">
           <SectionIntro label={`05 / ${home.art.label}`} title={<span id="art-title">{home.art.title}</span>} aside={home.art.intro} />
           <ArtGallery art={art} empty={home.art.empty} />

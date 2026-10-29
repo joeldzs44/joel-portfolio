@@ -40,7 +40,7 @@ export function ArtGallery({ art, empty }: { art: ArtCommit[]; empty: string }) 
       {shown.length ? (
         <ul className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
           {shown.map((item) => (
-            <li key={item.id} className="flex flex-col border border-line bg-surface">
+            <li key={item.id} className="flex flex-col border border-line bg-raised">
               <img src={item.imageUrl} alt={`Drawing tagged ${item.tag}${item.name ? ` by ${item.name}` : ""}`} width={480} height={360} loading="lazy" className="aspect-[4/3] w-full" />
               <div className="flex flex-col gap-2 p-4">
                 <div className="flex items-center justify-between gap-3">

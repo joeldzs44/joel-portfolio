@@ -22,7 +22,25 @@ describe("content security policy", () => {
   });
 });
 
+describe("vercel toolbar", () => {
+  it("can be framed on preview deployments", () => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    expect(csp()).toContain("frame-src https://challenges.cloudflare.com https://vercel.live");
+  });
+
+  it("can't be framed in production", () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    expect(csp()).toContain("frame-src https://challenges.cloudflare.com;");
+  });
+});
+
+const permissions = () => securityHeaders().find((header) => header.key === "Permissions-Policy")?.value ?? "";
+
 describe("security headers", () => {
+  it("only names features browsers still recognise", () => {
+    expect(permissions()).toBe("camera=(), microphone=(), geolocation=()");
+  });
+
   it("blocks framing and sniffing", () => {
     const keys = securityHeaders().map((header) => header.key);
     expect(keys).toEqual(

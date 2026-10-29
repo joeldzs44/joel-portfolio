@@ -66,10 +66,32 @@ export const skills: Discipline[] = [
     tagline: "Guardrails and visibility that let teams trust what ships.",
     tools: ["Guardrails", "Prompt-injection defence", "PII masking", "RBAC", "Langfuse", "New Relic", "SonarCloud", "GHAS"],
   },
+  {
+    title: "Web & product",
+    tagline: "The full stack behind this site, from the UI to the edge.",
+    tools: [
+      "TypeScript",
+      "Next.js",
+      "React",
+      "Tailwind CSS",
+      "Supabase (Postgres)",
+      "Vercel",
+      "OpenRouter",
+      "Cloudflare Turnstile",
+      "Resend",
+      "Vitest",
+    ],
+  },
 ];
 
 export const toolName = (tool: Tool) => (typeof tool === "string" ? tool : tool.name);
 export const isTop = (tool: Tool) => typeof tool !== "string";
+
+// Top tools first, by rank, then the rest in the order they're written.
+export function orderedTools(tools: Tool[]) {
+  const top = tools.filter((tool): tool is Exclude<Tool, string> => typeof tool !== "string").sort((a, b) => a.top - b.top);
+  return [...top, ...tools.filter((tool) => typeof tool === "string")];
+}
 
 export function topSkills() {
   return skills

@@ -21,12 +21,31 @@ stats:
   - { value: "4", label: Channels, note: "Web chat, inbound phone, SMS, outbound" }
 architecture:
   label: Agentic Voice / system overview
+  boundary: { title: AWS Cloud, from: 1, to: 3 }
   lanes:
-    - { title: Channels, nodes: [Web chat, Inbound phone (Vapi), SMS, Outbound calls] }
-    - { title: Gateway, nodes: [FastAPI on ECS Fargate, Tenant isolation + RBAC] }
-    - { title: Orchestration, nodes: [Intent classifier], accent: true }
-    - { title: Agents (Bedrock · Claude Sonnet · AgentSquad), nodes: [Booking, Reschedule & cancel, Notes & address, Lead intake] }
-    - { title: Systems, nodes: [ProjectsForce APIs] }
+    - title: Channels
+      nodes:
+        - { label: Web chat, icon: chat }
+        - { label: Inbound phone (Vapi), icon: phone }
+        - { label: SMS, icon: sms }
+        - { label: Outbound calls, icon: phone-out }
+    - title: Gateway
+      nodes:
+        - { label: FastAPI on ECS Fargate, icon: container }
+        - { label: Tenant isolation + RBAC, icon: shield }
+    - title: Orchestration
+      accent: true
+      nodes:
+        - { label: Intent classifier, icon: classifier }
+    - title: Agents (Bedrock · Claude Sonnet · AgentSquad)
+      nodes:
+        - { label: Booking, icon: agent }
+        - { label: Reschedule & cancel, icon: agent }
+        - { label: Notes & address, icon: agent }
+        - { label: Lead intake, icon: agent }
+    - title: Systems
+      nodes:
+        - { label: ProjectsForce APIs, icon: api }
   rail: [Guardrails, Observability]
   caption: Every request is classified once, then handled by one specialised agent.
 ---

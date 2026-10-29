@@ -39,18 +39,18 @@ export function Hero() {
               <p className="max-w-[30ch] font-display text-[clamp(1.375rem,1.15rem+0.9vw,2rem)] font-medium leading-[1.2] text-ink [text-wrap:balance]">
                 {hero.tagline}
               </p>
-              <p className="max-w-[58ch] leading-[1.7] text-muted">{hero.intro}</p>
+              <p className="hidden max-w-[58ch] leading-[1.7] text-muted sm:block">{hero.intro}</p>
             </div>
             <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap gap-3">
-                <Action href="#work" arrow="↓" className="w-full sm:w-auto">
+              <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+                <Action href="#work" arrow="↓" className="col-span-2 sm:w-auto">
                   See selected work
                 </Action>
-                <InterviewTrigger className={actionClasses("outline", "w-full sm:w-auto")}>
+                <InterviewTrigger id="hero-interview" className={actionClasses("outline", "sm:w-auto")}>
                   <span>Interview me</span>
                   <ActionArrow arrow="→" variant="outline" />
                 </InterviewTrigger>
-                <Action href="#contact" variant="outline" arrow="→" className="w-full sm:w-auto">
+                <Action href="#contact" variant="outline" arrow="→" className="sm:w-auto">
                   Get in touch
                 </Action>
               </div>

@@ -23,7 +23,7 @@ type ActionProps = {
 
 export function actionClasses(variant: ActionProps["variant"] = "primary", className?: string) {
   return clsx(
-    "group inline-flex h-[52px] items-center justify-between gap-7 border px-[22px] text-sm font-medium transition-colors",
+    "group inline-flex h-[52px] items-center justify-between gap-3 border px-4 text-sm sm:gap-7 sm:px-[22px] font-medium transition-colors",
     variant === "primary"
       ? "border-lime bg-lime text-lime-ink hover:bg-ink hover:border-ink"
       : "border-line text-ink hover:border-lime",

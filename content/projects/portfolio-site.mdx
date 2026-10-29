@@ -1,0 +1,99 @@
+---
+title: This Portfolio
+order: 3
+featured: false
+year: "2026"
+org: Personal
+tagline: A portfolio you can interview, built to be hard to abuse.
+summary: The site you're on. Visitors can interview an AI assistant that answers only from my portfolio, leave a drawing in a moderated gallery, or send me a message — all on a small serverless stack with defences against bots and free-LLM abuse.
+stack: [Next.js, TypeScript, Supabase, OpenRouter, Vercel]
+eyebrow: Personal / This portfolio
+headline: I built a portfolio that answers questions without giving away a free LLM.
+intro: A static portfolio tells you what I want to say. This one also lets you ask. The AI interview, the art gallery and the contact form each accept input from anyone on the internet, so most of the work went into making them safe and cheap to run.
+facts:
+  - { label: Role, value: Design and build }
+  - { label: Type, value: Personal project }
+  - { label: Stack, value: Next.js · Supabase · OpenRouter · Vercel }
+  - { label: Features, value: AI interview · Art gallery · Contact form }
+architecture:
+  label: Portfolio / system overview
+  boundary: { title: Vercel, from: 1, to: 2 }
+  lanes:
+    - title: Visitor
+      nodes:
+        - { label: Browser, icon: browser }
+    - title: Edge
+      nodes:
+        - { label: Middleware (CSP + headers), icon: shield }
+    - title: Next.js app
+      accent: true
+      nodes:
+        - { label: Pages (static + ISR), icon: product }
+        - { label: Interview API, icon: function }
+        - { label: Gallery API, icon: function }
+        - { label: Contact API, icon: function }
+    - title: Services
+      nodes:
+        - { label: Supabase Postgres, icon: database }
+        - { label: Supabase Storage, icon: storage }
+        - { label: OpenRouter LLM, icon: model }
+        - { label: Resend email, icon: email }
+  rail: [Turnstile bot checks, Rate limits, Signed sessions, Answer cache]
+  caption: Static pages for reading; three small APIs for anything a visitor sends.
+---
+
+<Problem label="01 / The problem" title="Anything a stranger can type into will be abused.">
+
+I wanted visitors to be able to ask about my work in their own words, instead of hunting through pages for it.
+
+An AI chat box on a public site is an open door: people will try to use it as a free general-purpose LLM, script it, or push it off-topic. The art gallery and contact form invite spam in the same way. Every feature had to be safe to leave running unattended, on a hobby budget.
+
+</Problem>
+
+<Approach label="02 / System design" title="Static where possible, guarded where not." intro="Next.js on Vercel, with three small APIs that each check who is calling before doing any work.">
+
+<Stage step="01 / Pages" title="Content as files">
+Projects, experience and writing live as typed files in the repository, rendered to static pages. The same files are what the AI assistant reads.
+</Stage>
+
+<Stage step="02 / Interview" title="An assistant that stays on topic">
+Answers stream from a model on OpenRouter, grounded only in the portfolio content. Off-topic questions get a fixed refusal, and repeated questions are answered from a cache.
+</Stage>
+
+<Stage step="03 / Gallery" title="Drawings, moderated">
+Visitors draw on a canvas with a handful of brushes. Submissions wait in private storage until I approve them, then move to a public bucket.
+</Stage>
+
+<Stage step="04 / Contact" title="Messages without an address">
+The contact form sends through Resend, so neither my email address nor my phone number appears anywhere on the site.
+</Stage>
+
+<Decision title="Make the chat useless as a free LLM.">
+Each session is bound to the visitor's hashed IP, questions are capped in length, and every previous answer the browser sends back must carry a signature from the server. A script can't feed in its own conversation history to steer the model, and a Turnstile check plus rate limits keep volume down.
+</Decision>
+
+<Decision title="Pay for an answer once.">
+Answers are cached against a hash of the portfolio content for up to a week. A popular question costs one model call, and editing the content invalidates the cache on its own.
+</Decision>
+
+</Approach>
+
+<Reflection label="03 / Evaluation" title="What it shows." subtitle="A small system with production habits.">
+
+The site is small, but it gets the same treatment as client work: tests for the guard logic, a strict content security policy, secrets kept on the server, and row-level security on every table.
+
+It's also a working sample of the kind of system I build at work — an LLM grounded in a fixed body of knowledge, with guardrails around it.
+
+</Reflection>
+
+<Takeaways>
+
+<Takeaway label="04 / What I’d keep" title="Treat every input as hostile.">
+Designing the interview against abuse first made the rest simple: once the checks were in place, the friendly path needed almost no special handling.
+</Takeaway>
+
+<Takeaway label="05 / What comes next" title="Writing about how it's built.">
+The next step is a set of posts that walk through the guardrails and caching in more detail.
+</Takeaway>
+
+</Takeaways>

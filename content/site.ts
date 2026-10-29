@@ -6,7 +6,7 @@ export const site = {
   title: "Joel Dsouza — AI Engineer",
   description:
     "AI engineer in Mumbai designing and deploying LLM applications, RAG architectures and enterprise AI systems.",
-  role: "Gen AI Engineer",
+  role: "AI Engineer",
   location: "Mumbai",
   // Drop a PDF in /public and set this to e.g. "/Joel-Dsouza-Resume.pdf" to show a résumé link.
   resumeUrl: undefined as string | undefined,
@@ -61,7 +61,7 @@ export const home = {
   },
   certifications: {
     label: "Continuous learning",
-    title: "The learning never ships.",
+    title: "The learning never stops.",
     intro: "Courses and certifications I’ve completed alongside client work.",
   },
   art: {

@@ -1,10 +1,26 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useInterview } from "@/components/interview/interview-provider";
+
+// True while the hero's own "Interview me" button is on screen, so the two don't sit side by side.
+function useHeroButtonVisible(pathname: string) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const button = document.getElementById("hero-interview");
+    if (!button) return setVisible(false);
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting));
+    observer.observe(button);
+    return () => observer.disconnect();
+  }, [pathname]);
+  return visible;
+}
 
 // A small floating button that opens the interview from anywhere on the site.
 export function InterviewFab() {
   const { open, setOpen } = useInterview();
+  const heroButton = useHeroButtonVisible(usePathname());
   return (
     <button
       type="button"
@@ -14,7 +30,7 @@ export function InterviewFab() {
       title="Interview Joel (press I)"
       onClick={() => setOpen(true)}
       // Hidden rather than unmounted while the panel is open, so focus can return here on close.
-      hidden={open}
+      hidden={open || heroButton}
       className="group fixed bottom-5 right-5 z-40 flex [&[hidden]]:hidden h-11 items-center rounded-full border border-line bg-page/90 px-3 text-sm text-ink shadow-[0_6px_24px_rgba(0,0,0,0.35)] backdrop-blur-md transition-colors hover:border-lime hover:text-lime focus-visible:border-lime md:bottom-8 md:right-8"
     >
       <svg aria-hidden viewBox="0 0 20 20" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">

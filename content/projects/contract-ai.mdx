@@ -21,11 +21,24 @@ stats:
   - { value: "1", label: Shared queue, note: Kafka absorbs bulk uploads }
 architecture:
   label: Contract AI / system overview
+  boundary: { title: Azure Cloud, from: 1, to: 2 }
   lanes:
-    - { title: Intake, nodes: [Contract documents, Bulk uploads] }
-    - { title: Queue, nodes: [Kafka] }
-    - { title: Services (FastAPI on AKS · horizontal scaling), nodes: [Clause identification (classical ML), Entity extraction (NER), AI assistant chat], accent: true }
-    - { title: Product, nodes: [GEP Quantum] }
+    - title: Intake
+      nodes:
+        - { label: Contract documents, icon: document }
+        - { label: Bulk uploads, icon: documents }
+    - title: Queue
+      nodes:
+        - { label: Kafka, icon: queue }
+    - title: Services (FastAPI on AKS · horizontal scaling)
+      accent: true
+      nodes:
+        - { label: Clause identification (classical ML), icon: classifier }
+        - { label: Entity extraction (NER), icon: model }
+        - { label: AI assistant chat, icon: chat }
+    - title: Product
+      nodes:
+        - { label: GEP Quantum, icon: product }
   rail: [RBAC, PII masking, Prompt-injection defence, New Relic + Langfuse]
   caption: Independent services scale per task; bulk jobs queue through Kafka.
 ---

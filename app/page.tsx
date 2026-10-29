@@ -22,7 +22,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
-      <section id="work" aria-labelledby="work-title" >
+      <section id="work" aria-labelledby="work-title" className="bg-surface">
         <Container className="flex flex-col gap-14 py-20 md:py-24">
           <SectionIntro label={`01 / ${home.work.label}`} title={<span id="work-title">{home.work.title}</span>} aside={home.work.intro} />
           {projects.map((project, index) => (
@@ -33,7 +33,7 @@ export default async function HomePage() {
 
       <SkillsSection index="02" />
 
-      <section id="experience" aria-labelledby="experience-title">
+      <section id="experience" aria-labelledby="experience-title" className="bg-surface">
         <Container className="flex flex-col gap-14 py-20 md:py-[104px] lg:flex-row lg:gap-[100px]">
           <div className="flex flex-col gap-6 lg:sticky lg:top-36 lg:w-[340px] lg:shrink-0 lg:self-start">
             <Eyebrow>03 / {home.experience.label}</Eyebrow>
@@ -85,7 +85,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <section id="certifications" aria-labelledby="certifications-title">
+      <section id="certifications" aria-labelledby="certifications-title" className="bg-surface">
         <Container className="flex flex-col gap-8 pb-20 md:pb-[104px]">
           <SectionIntro
             label={`04 / ${home.certifications.label}`}
@@ -127,7 +127,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <section id="art" aria-labelledby="art-title" className="border-t border-line">
+      <section id="art" aria-labelledby="art-title">
         <Container className="flex flex-col gap-10 py-20 md:py-24">
           <SectionIntro label={`05 / ${home.art.label}`} title={<span id="art-title">{home.art.title}</span>} aside={home.art.intro} />
           <ArtGallery art={art} empty={home.art.empty} />

@@ -31,7 +31,7 @@ export function ArtGallery({ art, empty }: { art: ArtCommit[]; empty: string }) 
             </button>
           ))}
         </div>
-        <button type="button" aria-haspopup="dialog" onClick={() => setDrawing(true)} className={actionClasses("primary", "self-start")}>
+        <button type="button" aria-haspopup="dialog" onClick={() => setDrawing(true)} className={actionClasses("primary", "w-full sm:w-auto")}>
           <span>New art commit</span>
           <ActionArrow arrow="+" />
         </button>

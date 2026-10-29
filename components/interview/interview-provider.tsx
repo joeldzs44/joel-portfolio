@@ -1,7 +1,10 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { InterviewPanel } from "@/components/interview/interview-panel";
+import dynamic from "next/dynamic";
+
+// Loaded on first open, so pages don't ship the panel to visitors who never use it.
+const InterviewPanel = dynamic(() => import("@/components/interview/interview-panel").then((m) => m.InterviewPanel), { ssr: false });
 
 type InterviewState = { open: boolean; setOpen: (open: boolean) => void };
 

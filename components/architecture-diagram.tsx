@@ -37,10 +37,10 @@ function LaneGroup({ lane, index }: { lane: Lane; index: number }) {
       <span className={clsx("font-mono text-[11px] leading-snug", lane.accent ? "text-lime" : "text-dim")}>{lane.title}</span>
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(88px,1fr))] gap-x-2 gap-y-4 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:gap-5">
         {lane.nodes.map((node) => (
-          <li key={node.label} className="flex flex-col items-center gap-2 text-center">
+          <li key={node.label} className="arch-node flex flex-col items-center gap-2 text-center">
             <span
               className={clsx(
-                "grid size-11 place-items-center rounded-md border",
+                "arch-tile grid size-11 place-items-center rounded-md border",
                 lane.accent ? "border-lime bg-lime text-lime-ink" : "border-line bg-raised text-ink",
               )}
             >

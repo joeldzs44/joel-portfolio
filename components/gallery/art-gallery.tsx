@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { clsx } from "clsx";
 import type { ArtCommit } from "@/lib/gallery/store";
 import { TAGS, type Tag } from "@/lib/gallery/constants";
-import { DrawingDialog } from "@/components/gallery/drawing-dialog";
 import { ActionArrow, actionClasses } from "@/components/ui";
+
+// Loaded when someone starts a drawing, not with the home page.
+const DrawingDialog = dynamic(() => import("@/components/gallery/drawing-dialog").then((m) => m.DrawingDialog), { ssr: false });
 
 export function ArtGallery({ art, empty }: { art: ArtCommit[]; empty: string }) {
   const [filter, setFilter] = useState<Tag | "all">("all");

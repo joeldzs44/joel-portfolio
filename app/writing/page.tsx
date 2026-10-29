@@ -51,7 +51,8 @@ function Cover({ post }: { post: Post }) {
 
 export default async function WritingPage() {
   const posts = await getAllPosts();
-  const [featured, ...rest] = posts;
+  // The newest post is featured on top and still listed below, so the archive and its counts are complete.
+  const [featured] = posts;
 
   return (
     <>
@@ -95,10 +96,10 @@ export default async function WritingPage() {
             </article>
           </Container>
 
-          {rest.length > 0 && (
+          {posts.length > 1 && (
             <Container className="pb-24">
               <WritingArchive
-                entries={rest.map((post) => ({
+                entries={posts.map((post) => ({
                   slug: post.slug,
                   title: post.title,
                   description: post.description,

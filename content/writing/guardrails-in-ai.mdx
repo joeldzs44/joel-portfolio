@@ -1,0 +1,112 @@
+---
+title: Guardrails in AI.
+description: The common attacks on LLM applications, from prompt injection to denial of wallet, and the layered defences that hold up in production.
+standfirst: A language model treats every token it reads as a possible instruction. That single property explains most of the attacks on LLM applications, and it is why no single filter is enough. This is how I think about the threats and the layers that contain them.
+date: 2026-10-30
+category: Engineering notes
+tags: [Security, Guardrails, LLM agents]
+draft: false
+related:
+  label: Read how this site's interview assistant is guarded
+  href: /projects/portfolio-site
+---
+
+An LLM application mixes two kinds of text in one context window: the instructions you wrote and the content it was asked to work on. The model has no reliable way to tell them apart. Most of the vulnerabilities below follow from that, so the defences have to sit around the model, not only inside the prompt.
+
+<Chapter label="Why it's different" title="The model cannot separate data from instructions.">
+
+In a traditional web application, a SQL query and the user's input travel separately, and parameterised queries keep them apart. An LLM has no equivalent. The system prompt, the user's message, a retrieved document and a tool result all arrive as text, and any of them can change what the model does next.
+
+That makes the model the wrong place to enforce a security boundary. A prompt that says "never reveal the customer list" is a request, not a control. The controls belong in the code that decides what the model can see, which tools it can call, and what happens to its output.
+
+</Chapter>
+
+<Chapter label="The attacks" title="Six ways LLM applications fail.">
+
+The [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) (2025 edition) is a useful map. Six of its themes cover most of what an application team has to plan for.
+
+**Direct prompt injection.** A user types instructions meant to override yours: "ignore the previous instructions and…". [Perez and Ribeiro](https://arxiv.org/abs/2211.09527) showed that simple handcrafted inputs could hijack a model's goal or make it leak its prompt.
+
+**Indirect prompt injection.** The instructions arrive inside content the model reads: a web page, an email, a PDF, a retrieved chunk. [Greshake et al.](https://doi.org/10.1145/3605764.3623985) demonstrated this against real-world LLM-integrated applications. It is the more dangerous variant, because the person using the app never sees the attack.
+
+**Jailbreaks.** Role-play, hypotheticals, encodings and adversarial suffixes push a model past its safety training. [Wei et al.](https://arxiv.org/abs/2307.02483) traced this to two failure modes, competing objectives and mismatched generalisation, and [Zou et al.](https://arxiv.org/abs/2307.15043) found adversarial suffixes that transfer from open models to commercial ones. A jailbreak usually needs only to succeed once.
+
+**Data and system-prompt exfiltration.** The model is coaxed into repeating [its instructions](https://genai.owasp.org/llmrisk/llm072025-system-prompt-leakage/), other users' data or retrieved documents it was never meant to show. Output channels count here too: if the application renders model output as links or images without [validating it](https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/), a URL can carry data to someone else's server.
+
+**Insecure tool use and [excessive agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/).** Once a model can send email, run queries or update records, an injected instruction becomes an action. The damage is bounded by what the tools allow, and it is easy to give a tool more permission than the task needs.
+
+**PII leakage and denial of wallet.** Personal data in prompts, logs and caches is [easy to leak](https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/) and hard to delete. Separately, a public endpoint that calls a paid model is an open meter. OWASP calls this [denial of wallet](https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/): scripted traffic, or someone using your app as a free general-purpose LLM, turns directly into cost.
+
+</Chapter>
+
+<PullQuote note="The working assumption">Treat everything the model reads as untrusted input, and everything it writes as untrusted output.</PullQuote>
+
+<Chapter label="The defences" title="Layers, because each one leaks.">
+
+No single control stops prompt injection; [OWASP itself notes](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) that it is unclear whether fool-proof prevention exists. So the goal is to make each layer catch what the previous one missed and to limit the damage when they all miss.
+
+| Layer | What it does | What it does not do |
+| --- | --- | --- |
+| Input filtering | Rejects oversized, off-topic or known-malicious input | Catch novel phrasing or indirect injection |
+| Output filtering | Checks responses for PII, secrets, unsafe links or formats | Undo an action already taken |
+| Least-privilege tools | Limits each tool to the minimum scope and data | Decide whether a permitted call is wise |
+| Human in the loop | Requires approval for risky or irreversible actions | Scale to every low-risk request |
+| Grounding | Answers only from approved sources, refuses otherwise | Guarantee the sources are clean |
+| Signed or validated context | Rejects history or state the server did not issue | Protect content the server itself fetched |
+| Rate limits and bot checks | Caps volume per session, IP or account | Stop a single well-crafted request |
+| Red-teaming and evals | Finds failures before users do, prevents regressions | Prove the absence of attacks |
+| Monitoring | Shows what the model and tools actually did | Prevent anything on its own |
+
+A few principles sit behind the table. Access control belongs to the application, not the prompt: the model should only ever receive data the current user is already allowed to see. Retrieved content should be marked as data and kept apart from instructions, even though that separation is imperfect. And any tool that changes state should validate its arguments as strictly as a public API would.
+
+</Chapter>
+
+<Chapter label="In practice" title="What this looked like on real systems.">
+
+At GEP, the contracts AI module handled clients' most sensitive documents, so role-based access control, PII masking and prompt-injection defences were part of the design from the start. SonarCloud and GitHub Advanced Security checked every change, and Langfuse and New Relic showed how each service and model call behaved in production.
+
+The interview assistant on this site is a smaller example, but it faces the internet directly, so it is built around abuse first:
+
+```yaml
+session: bound to a hash of the visitor's IP
+question: capped in length
+history: each previous answer must carry a server signature
+bot_check: Cloudflare Turnstile
+volume: rate limits
+cost: answers cached against a hash of the portfolio content
+scope: grounded only in the portfolio; off-topic questions get a fixed refusal
+```
+
+The signed history matters most. Without it, a script could send a fabricated conversation and steer the model through answers it never gave. The cache addresses denial of wallet: a popular question costs one model call, and editing the content invalidates the cache on its own.
+
+</Chapter>
+
+<Chapter label="Keeping it honest" title="Test guardrails like any other feature.">
+
+Guardrails decay. Models are updated, prompts change, new tools are added, and an injection that failed last month may succeed today. The practical answer is to treat them like any other feature: keep a set of adversarial test cases next to the normal evaluation set, log failures with their full context, and do not ship a change that lowers the pass rate. On this site, the guard logic has its own tests for the same reason.
+
+It also helps to decide in advance what a failure costs. A chatbot that answers an off-topic question is a nuisance. An agent that emails a customer list to an attacker is an incident. The second case deserves a human approval step, however good the filters look in testing.
+
+</Chapter>
+
+<Summary>
+- The model cannot tell instructions from data, so security controls live outside it.
+- Indirect prompt injection through documents and tools is the risk most teams underestimate.
+- Give tools the least privilege that works, and put a person in front of irreversible actions.
+- Layer filtering, grounding, signed context, rate limits and monitoring, since each one leaks.
+- Keep an adversarial test set and run it on every change.
+</Summary>
+
+<References>
+OWASP Gen AI Security Project (2025). [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/).
+
+Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T. and Fritz, M. (2023). [Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection](https://doi.org/10.1145/3605764.3623985). Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security (AISec '23), 79-90.
+
+Perez, F. and Ribeiro, I. (2022). [Ignore Previous Prompt: Attack Techniques for Language Models](https://arxiv.org/abs/2211.09527). NeurIPS 2022 ML Safety Workshop.
+
+Wei, A., Haghtalab, N. and Steinhardt, J. (2023). [Jailbroken: How Does LLM Safety Training Fail?](https://arxiv.org/abs/2307.02483) NeurIPS 2023.
+
+Zou, A., Wang, Z., Carlini, N., Nasr, M., Kolter, J. Z. and Fredrikson, M. (2023). [Universal and Transferable Adversarial Attacks on Aligned Language Models](https://arxiv.org/abs/2307.15043). arXiv:2307.15043.
+
+National Institute of Standards and Technology (2024). [Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile (NIST AI 600-1)](https://doi.org/10.6028/NIST.AI.600-1).
+</References>

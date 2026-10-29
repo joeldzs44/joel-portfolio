@@ -8,7 +8,7 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="bg-surface">
+    <footer className="bg-surface [body:has(#contact.bg-surface)_&]:bg-page">
       <Container className="flex flex-col gap-8 border-t border-line py-10 md:flex-row md:items-center md:justify-between">
         <p className="font-display text-[22px] text-ink">{site.name}</p>
         <ul className="flex flex-wrap gap-x-8 gap-y-3 font-mono text-xs text-muted">

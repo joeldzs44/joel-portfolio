@@ -54,7 +54,10 @@ export function Hero() {
                   Get in touch
                 </Action>
               </div>
-              <p className="hidden text-sm text-dim sm:block">{hero.hint}</p>
+              <p className="hidden text-sm text-dim sm:block">
+                {hero.hint}
+                <span className="[@media(hover:none)]:hidden"> {hero.shortcut}</span>
+              </p>
             </div>
           </div>
 

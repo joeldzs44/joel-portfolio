@@ -2,11 +2,12 @@ import { home } from "@/content/site";
 import { Container, Eyebrow, Lines } from "@/components/ui";
 import { ContactForm } from "@/components/contact-form";
 
-export function ContactSection({ index }: { index: string }) {
+// `surface` puts the section on the lighter band, for when the section above it is dark.
+export function ContactSection({ index, surface = false }: { index: string; surface?: boolean }) {
   const { contact } = home;
 
   return (
-    <section id="contact" aria-labelledby="contact-title">
+    <section id="contact" aria-labelledby="contact-title" className={surface ? "bg-surface" : undefined}>
       <Container className="grid gap-12 pb-16 pt-20 md:pt-[88px] lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
         <div className="flex flex-col gap-7">
           <Eyebrow>

@@ -1,7 +1,15 @@
-import { Children } from "react";
+import { Children, isValidElement } from "react";
 import { Eyebrow } from "@/components/ui";
 
 // MDX building blocks for content/writing/*.mdx. See how-to-publish.mdx for usage.
+
+// MDX joins one-reference-per-line into a single paragraph; split it back into one item per line.
+function referenceItems(children: React.ReactNode): React.ReactNode[] {
+  return Children.toArray(children).flatMap((child) => {
+    const text = isValidElement<{ children?: React.ReactNode }>(child) ? child.props.children : child;
+    return typeof text === "string" ? text.split("\n").map((line) => line.trim()).filter(Boolean) : [child];
+  });
+}
 
 export const slugify = (text: string) =>
   text
@@ -51,7 +59,11 @@ export function articleComponents(chapters: string[]) {
     return (
       <footer className="mt-6 flex flex-col gap-4 border-t border-line pt-8">
         <Eyebrow tone="muted">Reading & context</Eyebrow>
-        <div className="text-sm leading-[1.7] text-muted">{Children.toArray(children)}</div>
+        <ol className="flex flex-col gap-3 text-sm leading-[1.7] text-muted">
+          {referenceItems(children).map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ol>
       </footer>
     );
   }

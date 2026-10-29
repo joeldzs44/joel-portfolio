@@ -31,7 +31,7 @@ export const skills: Discipline[] = [
   },
   {
     title: "Models & NLP",
-    tagline: "Trained and tuned for the documents that matter.",
+    tagline: "Fine-tuned and classical models for contracts and other enterprise documents.",
     tools: [
       "Fine-tuning LLMs",
       "Classical ML",

@@ -8,6 +8,8 @@ describe("buildProfile", () => {
     expect(prompt).toContain("Contract AI");
     expect(prompt).toContain("Open to opportunities");
     expect(prompt).toContain("GEP");
+    expect(prompt).toContain("notice period is 60 days");
+    expect(prompt).toContain("Please confirm with Joel.");
   });
 
   it("contains no MDX component tags", async () => {

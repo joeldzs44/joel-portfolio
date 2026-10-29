@@ -67,7 +67,7 @@ export function DrawingDialog({ onClose }: { onClose: () => void }) {
         {status.state === "sent" ? (
           <div className="flex flex-col items-start gap-5">
             <p role="status" className="border border-lime bg-moss p-5">
-              Thanks — it&apos;ll appear once Joel approves it.
+              Thanks — it&apos;ll appear once I&apos;ve had a look.
             </p>
             <button type="button" onClick={() => dialog.current?.close()} className="border border-line px-4 py-2 hover:border-lime">
               Done

@@ -9,7 +9,7 @@ type Status = { state: "idle" | "sending" | "sent" } | { state: "error"; message
 type Errors = Partial<Record<"name" | "email" | "message", string>>;
 
 const field =
-  "w-full border border-line bg-surface px-4 py-3 text-ink placeholder:text-dim transition-colors focus:border-lime focus:outline-none aria-[invalid=true]:border-danger";
+  "w-full border border-line bg-surface [.bg-surface_&]:bg-page px-4 py-3 text-ink placeholder:text-dim transition-colors focus:border-lime focus:outline-none aria-[invalid=true]:border-danger";
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>({ state: "idle" });
@@ -17,6 +17,9 @@ export function ContactForm() {
   const [token, setToken] = useState("");
   // Each bot-check token works once; a new widget is rendered after a failed send.
   const [attempt, setAttempt] = useState(0);
+  // The bot check loads only once someone starts using the form, not for every visitor.
+  const [engaged, setEngaged] = useState(false);
+  const engage = () => setEngaged(true);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,7 +64,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex w-full flex-col gap-5">
+    <form onSubmit={onSubmit} onFocusCapture={engage} onPointerDownCapture={engage} noValidate className="flex w-full flex-col gap-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Name" error={errors.name}>
           <input name="name" autoComplete="name" required maxLength={CONTACT_LIMITS.name} className={field} aria-invalid={!!errors.name} />
@@ -90,7 +93,7 @@ export function ContactForm() {
       </Field>
       {/* Honeypot: hidden from people, irresistible to bots. */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
-      <Turnstile key={attempt} onToken={setToken} onError={() => setStatus({ state: "error", message: TURNSTILE_ERROR })} />
+      {engaged && <Turnstile key={attempt} onToken={setToken} onError={() => setStatus({ state: "error", message: TURNSTILE_ERROR })} />}
       <div className="flex flex-wrap items-center gap-5">
         <button
           type="submit"

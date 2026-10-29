@@ -14,7 +14,7 @@ export function ProjectFeature({ project, index }: { project: Project; index: nu
             Project {number} / {project.org} / {project.year}
           </Eyebrow>
           <h3 className="font-display text-[clamp(2.5rem,1.9rem+2.2vw,4rem)] font-medium leading-[1.05] text-ink">
-            <Link href={href} className="group">
+            <Link href={href} className="group transition-colors hover:text-lime">
               {project.title}
               <span aria-hidden className="inline-block pl-[0.25em] text-lime transition-transform group-hover:-translate-y-1 group-hover:translate-x-1">
                 ↗

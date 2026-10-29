@@ -24,7 +24,8 @@ export const nav = [
   { label: "Work", href: "/projects", match: /^\/projects/, sections: ["work"] },
   { label: "Skills", href: "/#skills", match: null, sections: ["skills"] },
   { label: "Experience", href: "/#experience", match: null, sections: ["experience", "certifications"] },
-  { label: "Writing", href: "/writing", match: /^\/writing/, sections: [], writing: true },
+  { label: "Art", href: "/#art", match: null, sections: ["art"] },
+  { label: "Writing", href: "/writing", match: /^\/writing/, sections: ["writing"], writing: true },
 ] as const;
 
 export const contactNav = { label: "Contact", href: "/#contact", sections: ["contact"] } as const;
@@ -36,7 +37,9 @@ export const home = {
     tagline: "I build production LLM systems — agents, retrieval and voice — that enterprises actually adopt.",
     intro:
       "Five years taking language models from notebooks to production: a contract intelligence platform used by 20+ clients at GEP, and a multi-channel voice and chat scheduling agent at ProjectsForce.",
-    hint: "Hiring? Press I to interview my AI assistant about fit, projects and availability.",
+    hint: "Hiring? Interview my AI assistant about fit, projects and availability.",
+    // Shown only where there's a keyboard to press it on.
+    shortcut: "Or press I.",
     stats: [
       { value: "~5", label: "Years in AI" },
       { value: "10+", label: "Projects shipped" },
@@ -46,7 +49,7 @@ export const home = {
   work: {
     label: "Selected work",
     title: "Systems I’ve built.",
-    intro: "Production LLM systems from ProjectsForce and GEP — what they do, how they fit together and what I owned.",
+    intro: "A few of the 10+ projects I’ve delivered, from ProjectsForce and GEP — what they do, how they fit together and what I owned.",
   },
   skills: {
     label: "Toolkit",
@@ -60,8 +63,8 @@ export const home = {
       "Five years taking language models from notebooks to production — contract intelligence at GEP, agentic voice and chat at ProjectsForce.",
   },
   certifications: {
-    label: "Continuous learning",
-    title: "The learning never stops.",
+    label: "Certifications",
+    title: "Courses alongside client work.",
     intro: "Courses and certifications I’ve completed alongside client work.",
   },
   art: {
@@ -70,10 +73,15 @@ export const home = {
     intro: "Draw something, tag it and leave a short note. New drawings appear once I've had a look.",
     empty: "No art commits yet — be the first.",
   },
+  writing: {
+    label: "Writing",
+    title: "Notes from the work.",
+    intro: "Longer write-ups on building, evaluating and guarding AI systems.",
+  },
   contact: {
     label: "Next conversation",
     title: ["Have a hard problem?", "Let’s make it tractable."],
-    body: "Open to AI engineering roles and thoughtful research collaborations.",
+    body: "Open to AI engineering roles and research collaborations. Send a note about the role or problem; I reply within a few days.",
   },
 };
 
@@ -87,6 +95,9 @@ export const interview = {
     "What has he built with RAG and LLM agents?",
   ],
   disclaimer: "AI answers from Joel's portfolio. It can be wrong — confirm anything important with Joel.",
+  // Shared with the assistant only, so it can answer notice-period questions.
+  availability:
+    "Joel is actively looking for new opportunities. His notice period is 60 days, and he is not currently serving notice.",
 };
 
 export const writingPage = {
@@ -96,7 +107,7 @@ export const writingPage = {
   stance: {
     label: "A note on these notes",
     title: "Less certainty. Better questions.",
-    body: "I write to make my thinking inspectable. Research posts separate observations from hypotheses; engineering posts include trade-offs and failure modes.",
+    body: "I write to make my thinking inspectable. Engineering posts include the trade-offs and the failure modes, not just what worked.",
     motto: "Reproducibility over authority. Evidence over aesthetics.",
   },
 };

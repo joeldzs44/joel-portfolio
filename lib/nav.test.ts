@@ -15,7 +15,12 @@ describe("activeNavLabel", () => {
   });
 
   it("marks nothing for a section without a nav item", () => {
-    expect(activeNavLabel("/", "art")).toBeNull();
+    expect(activeNavLabel("/", "not-a-section")).toBeNull();
+  });
+
+  it("marks Art and Writing while their home sections are in view", () => {
+    expect(activeNavLabel("/", "art")).toBe("Art");
+    expect(activeNavLabel("/", "writing")).toBe("Writing");
   });
 
   it("uses the route on other pages", () => {

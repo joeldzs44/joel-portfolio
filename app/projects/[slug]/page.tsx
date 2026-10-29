@@ -10,6 +10,9 @@ import { caseStudyComponents } from "@/components/case-study";
 
 type Params = { params: Promise<{ slug: string }> };
 
+// Content only changes on deploy, so unknown slugs get the static 404 without a render.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return (await getAllProjects()).map(({ slug }) => ({ slug }));
 }

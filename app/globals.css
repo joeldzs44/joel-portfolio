@@ -79,3 +79,25 @@
   animation: lane-pulse 700ms ease-out both;
   animation-delay: calc(var(--lane) * 260ms);
 }
+
+/* Architecture diagram: on desktops with a mouse, the hovered service lifts slightly with a lime halo. */
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+  .arch-tile {
+    transition:
+      transform 200ms ease-out,
+      box-shadow 200ms ease-out;
+  }
+
+  .arch-node:hover .arch-tile {
+    transform: translateY(-3px) scale(1.08);
+    box-shadow:
+      0 0 0 1px rgb(197 244 107 / 0.9),
+      0 0 22px 4px rgb(197 244 107 / 0.35);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arch-node:hover .arch-tile {
+      transform: none;
+    }
+  }
+}

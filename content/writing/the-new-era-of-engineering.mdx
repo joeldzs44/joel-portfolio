@@ -1,0 +1,109 @@
+---
+title: The new era of engineering.
+description: As coding tools write more of the code, the engineer's job shifts toward stating intent, reviewing output and owning the result. What that changes, and what it doesn't.
+standfirst: Coding tools can now produce a working change from a paragraph of instructions. That moves the hard part of engineering, rather than removing it. The work is increasingly about saying precisely what you want, checking what came back, and deciding whether it belongs in the system at all.
+date: 2026-10-30
+category: Field notes
+tags: [Engineering, AI tools, Practice]
+draft: false
+---
+
+For most of the history of software, the bottleneck was typing the code. Today a coding tool can draft a function, a test suite or a migration faster than I can describe the edge cases. The bottleneck has moved to the steps on either side: specifying the change and verifying it.
+
+<Chapter label="What changed" title="From writing code to directing it.">
+
+The day-to-day loop now looks different. Instead of opening a file and writing, an engineer describes the change, lets a tool propose an implementation, reads the diff, runs the tests and either accepts it, corrects it or throws it away.
+
+None of the underlying responsibilities went anywhere. Someone still has to understand the problem, choose the design, notice the case nobody mentioned and answer for the result in production. What changed is how much of the mechanical work sits between those decisions, and how quickly a wrong decision can be turned into a large amount of plausible code.
+
+</Chapter>
+
+<Chapter label="Intent" title="Specifying intent is the new first draft.">
+
+A coding tool fills every gap in an instruction with a guess. "Add retries to the client" can mean three retries or thirty, on every error or only on timeouts, with or without backoff. The tool will pick something, and it will usually look reasonable.
+
+So the specification has become the first draft of the code. A good one names the goal, the constraints and the boundaries:
+
+```yaml
+goal: retry failed calls to the scheduling API
+retry_on: [timeouts, HTTP 429, HTTP 5xx]
+never_retry: [HTTP 4xx except 429]
+attempts: 3, exponential backoff with jitter
+out_of_scope: changing the public interface of the client
+done_when: existing tests pass and new tests cover each retry rule
+```
+
+Writing this takes a few minutes. It also forces the decisions that would otherwise be made silently by the tool, which is where most of the value is.
+
+</Chapter>
+
+<Chapter label="Review" title="Reviewing diffs is the core skill now.">
+
+When a person writes code, review catches what they missed. When a tool writes it, review is where the engineering happens. The diff has to be read as if a capable stranger wrote it: someone fluent in the language, unfamiliar with this codebase, and confident whether or not they are right.
+
+That changes what to look for. Syntax and style are rarely the problem. The problems are a dependency that does not exist, an error swallowed to make a test pass, a check that runs on the client instead of the server, or a correct change to the wrong layer. Each of these reads cleanly, which is exactly why it gets through.
+
+</Chapter>
+
+<PullQuote note="A simple merge test">If I could not explain the change to a reviewer, I am not ready to merge it.</PullQuote>
+
+<Chapter label="Tests" title="Tests become the contract.">
+
+Tests used to be a safety net. With generated code, they are closer to a contract: the written-down definition of what correct means, which the tool's output has to satisfy.
+
+That puts more weight on writing the tests deliberately, ideally before or alongside the specification, and on reading any tests the tool writes with extra suspicion. A generated test that asserts whatever the generated code happens to return proves nothing. The useful tests encode a rule someone chose: retry on a 429, never on a 400; reject a session that was not issued by the server.
+
+</Chapter>
+
+<Chapter label="What matters more" title="Judgement and system design carry more weight.">
+
+If producing code is cheap, the expensive decisions are the ones about what to build and where it should live. A few skills matter more than they did:
+
+| Skill | Why it matters more now |
+| --- | --- |
+| Problem framing | A precise question gets a usable answer; a vague one gets a confident guess |
+| System design | Generated code follows local patterns and cannot see the whole system |
+| Reading code | Most code an engineer handles is now code they did not write |
+| Testing strategy | Tests define correctness for output nobody typed by hand |
+| Security instinct | Plausible code can still trust the wrong input |
+| Saying no | It is cheap to add code, and every line still has to be maintained |
+
+None of these are new. They were always what separated senior engineers from fast typists. The difference is that they now show up in every change, not only in the large ones.
+
+</Chapter>
+
+<Chapter label="The risks" title="Plausible is not the same as correct.">
+
+The evidence on productivity is more mixed than the enthusiasm suggests. In a controlled experiment, [Peng et al.](https://arxiv.org/abs/2302.06590) found that developers with access to GitHub Copilot implemented an HTTP server in JavaScript 55.8% faster than a control group without it. A 2025 randomised controlled trial by [METR](https://arxiv.org/abs/2507.09089) found the opposite for 16 experienced open-source developers working on mature projects they knew well: with AI tools they took 19% longer, yet afterwards estimated that the tools had made them 20% faster. Both can be true. The gain depends heavily on the task, the codebase and how much verification the work needs.
+
+Security deserves its own attention. [Pearce et al.](https://arxiv.org/abs/2108.09293) found that about 40% of the 1,689 programs Copilot generated across 89 security-relevant scenarios were vulnerable. [Perry et al.](https://arxiv.org/abs/2211.03622) found that participants with an AI assistant wrote less secure code and were more likely to believe it was secure. The second finding matters more: the risk is not only the code, but the confidence it creates.
+
+The last risk is quieter. Skills that are not used fade. An engineer who never writes a tricky piece of logic by hand may find it harder to judge when a tool gets that logic wrong. I think the answer is deliberate practice: keep writing the parts that teach you something, and let the tools take the parts that do not.
+
+</Chapter>
+
+<Chapter label="Working this way" title="A short checklist.">
+
+What follows is the routine I find useful when a tool is doing most of the typing. Each step is ordinary engineering practice; what changes is how strictly it is applied.
+
+Write the intent down before asking for code. Keep changes small enough to review in one sitting. Read every diff before running it, and run the tests before reading the summary. Treat new dependencies, auth checks and anything touching user data as requiring a second look. And if a change cannot be explained in plain words, do not merge it yet.
+
+</Chapter>
+
+<Summary>
+- Coding tools move the bottleneck from writing code to specifying and verifying it.
+- A precise specification is the new first draft.
+- Review generated diffs as if a confident stranger wrote them.
+- Tests define correctness, so write them deliberately and distrust generated ones.
+- Productivity gains are real in some settings and absent in others; security and skill atrophy are real risks either way.
+</Summary>
+
+<References>
+Peng, S., Kalliamvakou, E., Cihon, P. and Demirer, M. (2023). [The Impact of AI on Developer Productivity: Evidence from GitHub Copilot](https://arxiv.org/abs/2302.06590). arXiv:2302.06590.
+
+Becker, J., Rush, N., Barnes, E. and Rein, D. (2025). [Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity](https://arxiv.org/abs/2507.09089). METR. arXiv:2507.09089.
+
+Pearce, H., Ahmad, B., Tan, B., Dolan-Gavitt, B. and Karri, R. (2022). [Asleep at the Keyboard? Assessing the Security of GitHub Copilot's Code Contributions](https://arxiv.org/abs/2108.09293). IEEE Symposium on Security and Privacy 2022.
+
+Perry, N., Srivastava, M., Kumar, D. and Boneh, D. (2023). [Do Users Write More Insecure Code with AI Assistants?](https://arxiv.org/abs/2211.03622) ACM CCS '23, 2785-2799.
+</References>

@@ -1,12 +1,13 @@
 import { home } from "@/content/site";
 import { education, experience } from "@/content/experience";
 import { certifications } from "@/content/certifications";
-import { formatMonth, getAllProjects } from "@/lib/content";
+import { formatMonth, getAllPosts, getAllProjects } from "@/lib/content";
 import { Eyebrow, Container, Lines, SectionIntro } from "@/components/ui";
 import { Hero } from "@/components/hero";
 import { SkillsSection } from "@/components/skills-section";
 import { ProjectFeature } from "@/components/project-feature";
 import { ContactSection } from "@/components/contact-section";
+import { WritingSection } from "@/components/writing-section";
 import { ArtGallery } from "@/components/gallery/art-gallery";
 import { getApprovedArt } from "@/lib/gallery/store";
 
@@ -14,10 +15,12 @@ import { getApprovedArt } from "@/lib/gallery/store";
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [projects, art] = await Promise.all([
+  const [projects, art, posts] = await Promise.all([
     getAllProjects().then((all) => all.filter((project) => project.featured)),
     getApprovedArt(),
+    getAllPosts(),
   ]);
+  const latestPosts = posts.slice(0, 3);
 
   return (
     <>
@@ -134,7 +137,10 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <ContactSection index="06" />
+      {latestPosts.length > 0 && <WritingSection posts={latestPosts} index="06" />}
+
+      {/* With writing on the dark band, contact takes the lighter one so the bands keep alternating. */}
+      <ContactSection index={latestPosts.length > 0 ? "07" : "06"} surface={latestPosts.length > 0} />
     </>
   );
 }

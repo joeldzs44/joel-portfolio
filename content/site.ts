@@ -2,6 +2,8 @@
 
 export const site = {
   name: "Joel Dsouza",
+  // Canonical, share and sitemap URLs are built from this. Change it here if a custom domain is added.
+  url: "https://joeldzs.vercel.app",
   monogram: "jd.",
   title: "Joel Dsouza — AI Engineer",
   description:

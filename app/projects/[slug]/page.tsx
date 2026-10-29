@@ -7,6 +7,7 @@ import { getAllProjects, getProject } from "@/lib/content";
 import { Action, Container, Eyebrow } from "@/components/ui";
 import { ArchitectureDiagram } from "@/components/architecture-diagram";
 import { caseStudyComponents } from "@/components/case-study";
+import { metaTitle, pageMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -19,7 +20,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const project = await getProject((await params).slug);
-  return project ? { title: project.title, description: project.summary } : {};
+  if (!project) return {};
+  return pageMetadata({ title: metaTitle(project.seoTitle ?? project.title), description: project.summary, path: `/projects/${project.slug}` });
 }
 
 function Headline({ text }: { text: string }) {

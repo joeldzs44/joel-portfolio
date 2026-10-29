@@ -2,8 +2,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllProjects } from "@/lib/content";
 import { Container, Eyebrow } from "@/components/ui";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Work" };
+export const metadata: Metadata = pageMetadata({
+  title: "Work",
+  description:
+    "Case studies: an agentic voice and chat scheduling assistant at ProjectsForce, a contract intelligence platform adopted by 20+ clients at GEP, and this portfolio.",
+  path: "/projects",
+});
 
 export default async function ProjectsPage() {
   const projects = await getAllProjects();

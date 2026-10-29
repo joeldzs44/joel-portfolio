@@ -8,6 +8,8 @@ import { site } from "@/content/site";
 import { Action, Container, Eyebrow } from "@/components/ui";
 import { articleComponents, slugify } from "@/components/article";
 import { TableOfContents } from "@/components/table-of-contents";
+import { JsonLd } from "@/components/json-ld";
+import { blogPostingJsonLd, metaTitle, pageMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -20,7 +22,13 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const post = await getPost((await params).slug);
-  return post ? { title: post.title, description: post.description } : {};
+  if (!post) return {};
+  return pageMetadata({
+    title: metaTitle(post.title),
+    description: post.description,
+    path: `/writing/${post.slug}`,
+    article: { publishedTime: post.date, tags: post.tags },
+  });
 }
 
 export default async function ArticlePage({ params }: Params) {
@@ -41,6 +49,7 @@ export default async function ArticlePage({ params }: Params) {
 
   return (
     <>
+      <JsonLd data={blogPostingJsonLd(post)} />
       <Container className="flex flex-col gap-8 pb-16 pt-10 md:pt-14">
         <p className="meta">
           <Link href="/writing" className="hover:text-lime">
@@ -58,7 +67,7 @@ export default async function ArticlePage({ params }: Params) {
           <div className="flex flex-col gap-3 lg:w-[340px] lg:shrink-0">
             <p className="font-display text-[22px] text-ink">{site.name}</p>
             <p className="meta">
-              {formatDate(post.date)} / {post.readingMinutes} min read
+              <time dateTime={post.date}>{formatDate(post.date)}</time> / {post.readingMinutes} min read
               {post.tags.length > 0 && (
                 <>
                   <br />

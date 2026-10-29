@@ -1,8 +1,9 @@
-import { home } from "@/content/site";
+import type { Metadata } from "next";
+import { home, site } from "@/content/site";
 import { education, experience } from "@/content/experience";
 import { certifications } from "@/content/certifications";
 import { formatMonth, getAllPosts, getAllProjects } from "@/lib/content";
-import { Eyebrow, Container, Lines, SectionIntro } from "@/components/ui";
+import { Action, Eyebrow, Container, Lines, SectionIntro } from "@/components/ui";
 import { Hero } from "@/components/hero";
 import { SkillsSection } from "@/components/skills-section";
 import { ProjectFeature } from "@/components/project-feature";
@@ -10,9 +11,19 @@ import { ContactSection } from "@/components/contact-section";
 import { WritingSection } from "@/components/writing-section";
 import { ArtGallery } from "@/components/gallery/art-gallery";
 import { getApprovedArt } from "@/lib/gallery/store";
+import { JsonLd } from "@/components/json-ld";
+import { pageMetadata, personJsonLd } from "@/lib/seo";
 
 // Approved art commits refresh every five minutes, and immediately after a moderation action.
 export const revalidate = 300;
+
+// The home title adds the topics people search for; other pages use the "Page · Joel Dsouza" template.
+const homeTitle = `${site.name} — AI Engineer in Mumbai · LLMs, RAG and agents`;
+
+export const metadata: Metadata = {
+  ...pageMetadata({ title: homeTitle, description: site.description, path: "/" }),
+  title: { absolute: homeTitle },
+};
 
 export default async function HomePage() {
   const [projects, art, posts] = await Promise.all([
@@ -24,6 +35,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={personJsonLd()} />
       <Hero />
       <section id="work" aria-labelledby="work-title" className="bg-surface">
         <Container className="flex flex-col gap-14 py-20 md:py-24">
@@ -31,6 +43,9 @@ export default async function HomePage() {
           {projects.map((project, index) => (
             <ProjectFeature key={project.slug} project={project} index={index} />
           ))}
+          <Action href="/projects" variant="outline" arrow="→" className="self-start">
+            All case studies
+          </Action>
         </Container>
       </section>
 

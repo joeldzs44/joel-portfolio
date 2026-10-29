@@ -3,8 +3,9 @@ import { formatDate, getAllPosts, pad, type Post } from "@/lib/content";
 import { writingPage } from "@/content/site";
 import { Action, Container, Eyebrow, Lines } from "@/components/ui";
 import { WritingArchive } from "@/components/writing-archive";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Writing", description: writingPage.intro };
+export const metadata: Metadata = pageMetadata({ title: "Writing", description: writingPage.intro, path: "/writing" });
 
 function Cover({ post }: { post: Post }) {
   if (!post.cover) {

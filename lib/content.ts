@@ -12,6 +12,8 @@ const CONTENT_DIR = path.join(process.cwd(), "content");
 export type Project = {
   slug: string;
   title: string;
+  // Search-result title, when the on-page title only makes sense on this site.
+  seoTitle?: string;
   order: number;
   featured: boolean;
   year: string;

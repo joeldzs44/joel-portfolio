@@ -12,11 +12,17 @@ import "./globals.css";
 
 const display = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-display" });
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400"], variable: "--font-mono" });
+// Mono is only for small labels, so it loads without competing with the headline fonts.
+const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400"], variable: "--font-mono", preload: false });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: { default: site.title, template: `%s · ${site.name}` },
   description: site.description,
+  openGraph: { type: "website", siteName: site.name, locale: "en_IN", url: "/", title: site.title, description: site.description },
+  twitter: { card: "summary_large_image" },
+  // Search Console's HTML-tag check. Set GOOGLE_SITE_VERIFICATION in Vercel to the token it gives you.
+  ...(process.env.GOOGLE_SITE_VERIFICATION && { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }),
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

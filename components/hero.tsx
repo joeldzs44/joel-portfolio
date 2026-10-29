@@ -74,7 +74,7 @@ export function Hero() {
             </div>
             <dl className="grid grid-cols-3 gap-6 border-t border-line pt-6">
               {hero.stats.map((stat) => (
-                <div key={stat.label} className="flex flex-col-reverse gap-2">
+                <div key={stat.label} className="flex flex-col-reverse justify-end gap-2">
                   <dt className="text-sm leading-snug text-muted">{stat.label}</dt>
                   <dd className="font-display text-[clamp(2.25rem,1.9rem+1.2vw,3.25rem)] font-medium leading-none text-lime">
                     {stat.value}

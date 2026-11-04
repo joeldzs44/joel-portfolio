@@ -5,19 +5,19 @@ featured: true
 year: "2021–26"
 org: GEP
 tagline: Contract intelligence for enterprise procurement.
-summary: I architected and built the contracts AI module for GEP Quantum — independent services for clause identification, entity extraction and an AI assistant — designed to scale for bulk workloads and adopted by 20+ clients.
-stack: [Python, FastAPI, AKS, Kafka, Langfuse]
+summary: I architected and built the contracts AI module for GEP Quantum — independent services for clause identification, entity extraction and a RAG-based contract Q&A assistant — designed to scale for bulk workloads and adopted by 20+ enterprise clients.
+stack: [Python, FastAPI, LangChain, Qdrant, AKS, Kafka]
 eyebrow: GEP / Contract intelligence
 headline: I architected a contracts AI platform that 20+ enterprise clients adopted.
 intro: GEP Quantum is an enterprise procurement platform. Its contracts AI module reads contracts so people don't have to read every clause — finding clauses, pulling out key data points and answering questions. I architected and built it with a focus on scale and client adoption.
 facts:
   - { label: Role, value: Senior Data Scientist }
   - { label: Employer, value: GEP }
-  - { label: Stack, value: FastAPI · Azure Kubernetes · Kafka · New Relic · Langfuse }
+  - { label: Stack, value: FastAPI · LangChain · Qdrant · Azure Kubernetes · Kafka · New Relic · Langfuse }
   - { label: Scope, value: Architecture and build of the full module }
 stats:
   - { value: "20+", label: Clients, note: Using the module in production }
-  - { value: "3", label: Core services, note: "Clauses, entities, assistant" }
+  - { value: "3", label: Core services, note: "Clauses, entities, Q&A assistant" }
   - { value: "1", label: Shared queue, note: Kafka absorbs bulk uploads }
 architecture:
   label: Contract AI / system overview
@@ -33,9 +33,10 @@ architecture:
     - title: Services (FastAPI on AKS · horizontal scaling)
       accent: true
       nodes:
-        - { label: Clause identification (classical ML), icon: classifier }
+        - { label: Clause identification (fine-tuned transformer), icon: classifier }
         - { label: Entity extraction (NER), icon: model }
-        - { label: AI assistant chat, icon: chat }
+        - { label: Contract Q&A (RAG · LangChain), icon: chat }
+        - { label: Qdrant vector store, icon: database }
     - title: Product
       nodes:
         - { label: GEP Quantum, icon: product }
@@ -60,15 +61,15 @@ Contracts arrive one at a time or in large batches, and every job goes onto a Ka
 </Stage>
 
 <Stage step="02 / Clauses" title="Clause identification">
-Classical ML models trained on enterprise proprietary data classify contract clauses quickly and predictably.
+A transformer model fine-tuned on enterprise proprietary data classifies contract clauses quickly and predictably.
 </Stage>
 
 <Stage step="03 / Entities" title="Named entity recognition">
 NER pulls specific data points — parties, dates, values — out of each contract into structured fields.
 </Stage>
 
-<Stage step="04 / Assistant" title="AI assistant chat">
-An assistant answers questions about a contract, grounded in the document and behind the platform's guardrails.
+<Stage step="04 / Assistant" title="Contract Q&A with RAG">
+The Q&A assistant is a RAG pipeline built with LangChain: contracts are chunked and embedded into Qdrant, and each answer is grounded in the retrieved passages, behind the platform's guardrails.
 </Stage>
 
 <Decision title="Scale each task on its own.">
@@ -83,16 +84,16 @@ RBAC, PII masking and prompt-injection defences protected client data; SonarClou
 
 <Reflection label="03 / Evaluation" title="Adoption was the real test.">
 
-The module is used by more than 20 clients. The design decisions that mattered most were the unglamorous ones: a queue in front of everything, services that scale independently, and guardrails clients could audit.
+The module is used by more than 20 enterprise clients. The design decisions that mattered most were the unglamorous ones: a queue in front of everything, services that scale independently, and guardrails clients could audit.
 
-Using classical ML for clause identification, rather than an LLM for everything, kept the highest-volume task fast, cheap and consistent.
+Using a fine-tuned transformer for clause identification, rather than an LLM for everything, kept the highest-volume task fast, cheap and consistent.
 
 </Reflection>
 
 <Takeaways>
 
-<Takeaway label="04 / What I’d keep" title="Pick the simplest model that does the job.">
-Classical models for classification and LLMs where language understanding is actually needed gave the best balance of cost, speed and accuracy.
+<Takeaway label="04 / What I’d keep" title="Pick the right model for each task.">
+A fine-tuned transformer for high-volume classification, and RAG with an LLM only where open-ended questions needed it, gave the best balance of cost, speed and accuracy.
 </Takeaway>
 
 <Takeaway label="05 / What comes next" title="Deeper answers across many contracts.">

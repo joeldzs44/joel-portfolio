@@ -38,14 +38,14 @@ export const home = {
     location: "Mumbai, India (IST)",
     tagline: "I build production LLM systems — agents, retrieval and voice — that enterprises actually adopt.",
     intro:
-      "Five years taking language models from notebooks to production: a contract intelligence platform used by 20+ clients at GEP, and a multi-channel voice and chat scheduling agent at ProjectsForce.",
+      "5+ years taking language models from notebooks to production: a contract intelligence platform used by 20+ enterprise clients at GEP, and a multi-channel voice and chat scheduling agent at ProjectsForce.",
     hint: "Hiring? Interview my AI assistant about fit, projects and availability.",
     // Shown only where there's a keyboard to press it on.
     shortcut: "Or press I.",
     stats: [
-      { value: "~5", label: "Years in AI" },
+      { value: "5+", label: "Years in AI" },
       { value: "10+", label: "Projects shipped" },
-      { value: "50+", label: "Client adoptions" },
+      { value: "20+", label: "Enterprise clients" },
     ],
   },
   work: {
@@ -62,7 +62,7 @@ export const home = {
     label: "Experience",
     title: ["Research rigor.", "Engineering instinct."],
     intro:
-      "Five years taking language models from notebooks to production — contract intelligence at GEP, agentic voice and chat at ProjectsForce.",
+      "5+ years taking language models from notebooks to production — contract intelligence at GEP, agentic voice and chat at ProjectsForce.",
   },
   certifications: {
     label: "Certifications",

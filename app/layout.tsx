@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SmoothAnchors } from "@/components/smooth-anchors";
@@ -45,6 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </InterviewProvider>
         <SmoothAnchors />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
